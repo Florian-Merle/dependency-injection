@@ -1,0 +1,44 @@
+parameters:
+    my_param: 'John Doe'
+
+autowiring:
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/DependencyInjection/'
+            - '../src/Command/'
+            - '../src/Entity/'
+            - '../src/Kernel.php'
+
+services:
+    baz:
+        alias: App\Foo\Baz
+
+    App\Foo\Baz:
+        parameters:
+            - 'lol'
+
+    bar:
+        class: App\Foo\Bar
+        parameters:
+            baz: '@baz'
+
+    App\Foo\Client:
+        factory: ['@App\Foo\Factory', create]
+
+
+    # point_of_interest_handler:
+    #     alias: App\HotelHandler
+
+    point_of_interest_handler:
+        class: App\HotelHandler
+
+    App\FuelHandler:
+        decorates: point_of_interest_handler
+        parameters:
+            - '@.inner'
+
+    App\FoodHandler:
+        decorates: point_of_interest_handler
+        parameters:
+            - '@.inner'
